@@ -9,9 +9,9 @@ contract FundMe {
     mapping(address => uint256) public funderToAmount;
 
     // 最小金额
-    uint256 constant MINIMUM_VALUE = 1 * 10**18; //wei
+    uint256 constant MINIMUM_VALUE = 1 * 10 ** 18; //wei
     // 目标金额
-    uint256 constant TARGET_VALUE = 10 * 10**18; //wei
+    uint256 constant TARGET_VALUE = 10 * 10 ** 18; //wei
 
     // 部署时间
     uint256 deployTime;
@@ -78,6 +78,12 @@ contract FundMe {
         uint256 value = funderToAmount[funder];
         require(value >= amount, "You don't have enough money");
         funderToAmount[funder] = value - amount;
+    }
+
+    function getAmountByFounder(
+        address funder
+    ) external view returns (uint256) {
+        return funderToAmount[funder];
     }
 
     // 更换合约拥有者
