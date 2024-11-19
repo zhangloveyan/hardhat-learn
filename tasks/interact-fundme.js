@@ -11,7 +11,7 @@ task("interact-fundme", "测试转账")
         // 获取账号
         const [first, second] = await ethers.getSigners();
         // 第一个转账 默认使用第一个地址
-        const fundTx = await fundMe.connect(first).fund({ value: ethers.parseEther("1.5") });
+        const fundTx = await fundMe.connect(first).fund({ value: ethers.parseEther("3.5") });
         // 等待交易完成
         await fundTx.wait();
 
@@ -19,7 +19,7 @@ task("interact-fundme", "测试转账")
         const balanceOfContract = await ethers.provider.getBalance(fundMe.target);
         console.log('合约余额' + ethers.formatEther(balanceOfContract));
 
-        const fundTx_2 = await fundMe.connect(second).fund({ value: ethers.parseEther("2.2") })
+        const fundTx_2 = await fundMe.connect(second).fund({ value: ethers.parseEther("2.1") })
         await fundTx_2.wait();
 
         const balanceOfContract_2 = await ethers.provider.getBalance(fundMe.target);

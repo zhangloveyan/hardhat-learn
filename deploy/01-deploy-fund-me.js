@@ -14,12 +14,13 @@
 // const { deployments, getNamedAccounts } = require("hardhat");
 // 简写2
 module.exports = async ({ getNamedAccounts, deployments }) => {
+    console.log('自动部署 deploy 的脚本合约')
     const { firstAccount } = await getNamedAccounts()
     const { deploy } = deployments
 
     deploy("FundMe", {
         from: firstAccount,
-        args: [80],
+        args: [180],
         log: true
     })
     console.log(`first is ${firstAccount}`)
