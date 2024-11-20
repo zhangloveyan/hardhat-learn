@@ -5,6 +5,9 @@ require("./tasks/deploy-fundme");
 require("./tasks/interact-fundme");
 require("hardhat-deploy")
 
+require("@nomicfoundation/hardhat-ethers");
+require("hardhat-deploy-ethers");
+
 const SPEOLIA_URL = process.env.SPEOLIA_URL;
 const SPEOLIA_KEY = process.env.SPEOLIA_KEY;
 

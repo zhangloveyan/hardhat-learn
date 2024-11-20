@@ -14,7 +14,7 @@
 // const { deployments, getNamedAccounts } = require("hardhat");
 // 简写2
 module.exports = async ({ getNamedAccounts, deployments }) => {
-    console.log('自动部署 FundMe 的脚本合约')
+    console.log('开始部署 FundMe 的脚本合约')
     const { firstAccount } = await getNamedAccounts()
     const { deploy } = deployments
 
@@ -23,7 +23,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         args: [180],
         log: true
     })
-    console.log(`first is ${firstAccount}`)
+    console.log(`部署的账号是 ${firstAccount}`)
 }
 
 module.exports.tags = ["all", "fundme"]
