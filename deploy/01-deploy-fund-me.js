@@ -14,7 +14,7 @@
 // const { deployments, getNamedAccounts } = require("hardhat");
 // 简写2
 module.exports = async ({ getNamedAccounts, deployments }) => {
-    console.log('自动部署 deploy 的脚本合约')
+    console.log('自动部署 FundMe 的脚本合约')
     const { firstAccount } = await getNamedAccounts()
     const { deploy } = deployments
 
