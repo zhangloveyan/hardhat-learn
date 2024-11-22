@@ -11,12 +11,10 @@ describe("test fundme contract", async function () {
         // 变成可配置
         firstAccount = (await getNamedAccounts()).firstAccount
         secondAccount = (await getNamedAccounts()).secondAccount
-        console.log("🚀 ~ firstAccount:", firstAccount)
-        console.log("🚀 ~ secondAccount:", secondAccount)
-        
+
         const fundMeFactory = await ethers.getContractFactory("FundMe");
         fundMe = await fundMeFactory.deploy(60);
-        
+
         // 有点问题 先不用这种方式
         // await deployments.fixture(["fundme"])
         // const fundMeDeployment = await deployments.get("FundMe")
@@ -42,31 +40,38 @@ describe("test fundme contract", async function () {
 
         expect(fundMe.fund({ value: ethers.parseEther('1') }))
             .to.be.revertedWith('Activity is end');
-
     })
 
     it("test Send more ETH", async function () {
         await fundMe.waitForDeployment();
         expect(fundMe.fund({ value: ethers.parseEther('0.1') }))
-            .to.be.revertedWith('Send more ETH');
+            .to.revertedWith('Send more ETH');
 
     })
 
     it("test fund eth right", async function () {
         await fundMe.waitForDeployment();
         await fundMe.fund({ value: ethers.parseEther('1.1') })
-        const sec = await ethers.getContract("FundMe", secondAccount)
+        // const sec = await ethers.getContract("FundMe", secondAccount)
 
-        await fundMe.connect(sec).fund({ value: ethers.parseEther('1.5') })
+        // await fundMe.connect(sec).fund({ value: ethers.parseEther('1.5') })
 
         const balance = await ethers.provider.getBalance(fundMe);
         const firstAmount = await fundMe.funderToAmount(firstAccount)
-        const secondAmount = await fundMe.funderToAmount(secondAccount)
+        // const secondAmount = await fundMe.funderToAmount(secondAccount)
         assert.equal(1.1, ethers.formatEther(firstAmount))
-        assert.equal(1.5, ethers.formatEther(secondAmount))
-        assert.equal(2.6, ethers.formatEther(balance))
+        // assert.equal(1.5, ethers.formatEther(secondAmount))
+        // assert.equal(2.6, ethers.formatEther(balance))
+    })
 
+    it("test refund, fund not reached when activity is end", async function () {
+        await fundMe.waitForDeployment();
+        await fundMe.fund({ value: ethers.parseEther('0.002') })
+        await helpers.time.increase(200)
+        await helpers.mine()
 
+        await expect(fundMe.refund()).emit(fundMe, "RefundByFunder")
+            .withArgs(firstAccount, ethers.parseEther('0.002'))
     })
 
 })

@@ -9,9 +9,9 @@ contract FundMe {
     mapping(address => uint256) public funderToAmount;
 
     // 最小金额
-    uint256 constant MINIMUM_VALUE = 1 * 10 ** 18; //wei
+    uint256 constant MINIMUM_VALUE = 0.001 * 10 ** 18; //wei
     // 目标金额
-    uint256 constant TARGET_VALUE = 10 * 10 ** 18; //wei
+    uint256 constant TARGET_VALUE = 0.01 * 10 ** 18; //wei
 
     // 部署时间
     uint256 deployTime;
@@ -20,6 +20,12 @@ contract FundMe {
 
     // 是否完成
     bool public complete = false;
+
+    // 使用 event 发出事件
+    // 提钱
+    event FundWithrawByOwner(uint256);
+    // 退款
+    event RefundByFunder(address, uint256);
 
     // 初始化函数
     constructor(uint256 _lockTime) {
@@ -53,24 +59,24 @@ contract FundMe {
         // call 调用函数、携带参数、返回参数
         // 方式 {bool, result} = addr.call{value: value}("");
         bool success_2;
-        (success_2, ) = payable(msg.sender).call{value: address(this).balance}(
-            ""
-        );
+        uint256 balance = address(this).balance;
+        (success_2, ) = payable(msg.sender).call{value: balance}("");
         require(success_2, "call tx fail");
         complete = true;
+        emit FundWithrawByOwner(balance);
     }
 
     // 退款
     function refund() external activityNotEnd {
         require(address(this).balance < TARGET_VALUE, "Target is reached");
-        require(funderToAmount[msg.sender] != 0, "You didn't fund");
+        uint256 balance = funderToAmount[msg.sender];
+        require(balance != 0, "You didn't fund");
 
         bool success_2;
-        (success_2, ) = payable(msg.sender).call{
-            value: funderToAmount[msg.sender]
-        }("");
+        (success_2, ) = payable(msg.sender).call{value: balance}("");
         require(success_2, "call tx fail");
         funderToAmount[msg.sender] = 0;
+        emit RefundByFunder(msg.sender, balance);
     }
 
     // 提供其他合约进行修改 需要添加校验，暂时没做
